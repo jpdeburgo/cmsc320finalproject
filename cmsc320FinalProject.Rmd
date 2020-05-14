@@ -6,7 +6,142 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+knitr::opts_chunk$s---
+title: "Untitled"
+author: "Justin De Burgo"
+date: "5/14/2020"
+output: html_document
+---
+
+```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+```
+
+## R Markdown
+
+
+```{r nba_seasons, inlciude=TRUE}
+nba_seasons <- read_csv("NBA_Season_Data.csv")
+
+nba_seasons <- nba_seasons%>%
+                filter(Year >= 2000) 
+
+for (row in 1:nrow(nba_seasons)) {
+  
+ if (nba_seasons[row, "Tm"] == "LAL") {
+   nba_seasons[row, "Tm"] <- "Los Angeles Lakers"
+ }
+  
+  if (nba_seasons[row, "Tm"] == "GSW") {
+   nba_seasons[row, "Tm"] <- "Golden State Warriors"
+  }
+  
+  if ( nba_seasons[row, "Tm"] == "CLE") {
+   nba_seasons[row, "Tm"] <- "Cleveland Cavaliers"
+  }
+  
+  if (nba_seasons[row, "Tm"] == "SAS") {
+   nba_seasons[row, "Tm"] <- "San Antonio Spurs"
+  }
+  
+  
+  if ( nba_seasons[row, "Tm"] == "MIA") {
+   nba_seasons[row, "Tm"] <- "Miami Heat"
+  }
+  
+  if (nba_seasons[row, "Tm"] == "DAL") {
+   nba_seasons[row, "Tm"] <- "Dallas Mavericks"
+  }
+  
+  if (nba_seasons[row, "Tm"] == "BOS") {
+   nba_seasons[row, "Tm"] <- "Boston Celtics"
+  }
+  
+  if (nba_seasons[row, "Tm"] == "DET") {
+   nba_seasons[row, "Tm"] <- "Detroit Pistons"
+  }
+  
+}
+nba_seasons
+```
+
+
+
+
+```{r nba_finals_mvp, include=TRUE}
+nba_finals_mvp <- read_csv("NBA_Finals_and_MVP.csv")
+
+nba_finals_mvp
+```
+
+
+```{r nba_champs, include=TRUE}
+nba_champs <- select(nba_finals_mvp, 1, 5) %>%
+                filter(Year >= 2000) %>%
+                arrange(desc(Year)) 
+nba_champs
+```
+
+
+```{r nba_seasons_offense, include=TRUE}
+nba_seasons_offense <- select(nba_seasons, Year, Tm, Player, Offense=Offense_1)
+
+nba_seasons_offense
+nba_seasons_offense %>%
+  arrange(desc(Offense)) %>%
+  slice(1:100)
+```
+
+
+```{r offense, include=TRUE}
+offense <- nba_seasons_offense %>%
+              filter(Year >= 2000) %>%
+              group_by(Year, Tm) %>%
+              summarize(mean_offense=sum(Offense))
+
+offense <- offense %>%
+            arrange(desc(mean_offense))
+
+offense
+```
+
+```{r change_names, include=TRUE}
+offense %>%
+  arrange(desc(Year)) 
+```
+
+```{r offense_champs, include=TRUE}
+
+offense_champs <- left_join(nba_champs, offense, by=c("Year"="Year", "NBA Champion"="Tm"))
+
+offense_champs <- offense_champs %>%
+                    filter(mean_offense > -100000)
+
+offense_champs<-rename(offense_champs, champ="NBA Champion")
+
+offense_champs
+
+```
+
+
+```{r plot_offense, include=TRUE}
+
+
+offense_champs %>%
+  ggplot(mapping=aes(x=champ, y=mean_offense, color="red", width=0.5)) +
+    geom_bar(stat="identity")
+```
+
+
+
+
+
+
+
+
+et(echo = TRUE)
 library(tidyverse)
 
 ```
