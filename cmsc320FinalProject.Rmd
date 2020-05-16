@@ -9,7 +9,6 @@ output: html_document
 
 ```{r setup, include=TRUE}
 library(tidyverse)
-
 ```
 
 ## R Markdown
@@ -17,10 +16,8 @@ library(tidyverse)
 
 ```{r nba_seasons, inlciude=TRUE}
 nba_seasons <- read_csv("NBA_Season_Data.csv")
-
 nba_seasons <- nba_seasons%>%
                 filter(Year >= 2000) 
-
 for (row in 1:nrow(nba_seasons)) {
   
  if (nba_seasons[row, "Tm"] == "LAL") {
@@ -65,7 +62,6 @@ nba_seasons
 
 ```{r nba_finals_mvp}
 nba_finals_mvp <- read_csv("NBA_Finals_and_MVP.csv")
-
 nba_finals_mvp
 ```
 
@@ -80,7 +76,6 @@ nba_champs
 
 ```{r nba_seasons_offense, include=TRUE}
 nba_seasons_offense <- select(nba_seasons, Year, Tm, Player, Offense=Offense_1, Defense = Defense_1)
-
 nba_seasons_offense
 nba_seasons_offense %>%
   arrange(desc(Offense)) %>%
@@ -93,10 +88,8 @@ offense <- nba_seasons_offense %>%
               filter(Year >= 2000) %>%
               group_by(Year, Tm) %>%
               summarize(mean_offense=sum(Offense), mean_defense=sum(Defense))
-
 offense <- offense %>%
             arrange(desc(mean_offense))
-
 offense
 ```
 
@@ -105,40 +98,32 @@ offense %>%
   arrange(desc(Year)) 
 ```
 
+```{r year_avg, include=TRUE}
+year_avg <- offense%>%
+              group_by(Year)%>%
+              summarize(league_avg_offense=mean(mean_offense), league_avg_defense=mean(mean_defense))
+year_avg
+```
+
 ```{r offense_champs, include=TRUE}
-
 offense_champs <- left_join(nba_champs, offense, by=c("Year"="Year", "NBA Champion"="Tm"))
-
 offense_champs <- offense_champs %>%
                     filter(mean_offense > -100000)
-
 offense_champs<-rename(offense_champs, champ="NBA Champion")
-
 offense_champs
-
 ```
 
 
 ```{r plot_offense, include=TRUE}
-
-
 offense_champs %>%
   ggplot(mapping=aes(x=champ, y=mean_offense, color="red", width=0.5)) +
     geom_bar(stat="identity")
-
-
 par(mar=c(11,4,4,4))
-test2 <- rbind(offense_champs$mean_offense,offense_champs$mean_defense)
+test2 <- rbind(offense_champs$mean_offense,offense_champs$mean_defense, year_avg$league_avg_offense, year_avg$league_avg_defense)
 barplot(test2,beside=T, names.arg = offense_champs$champ, las=2, legend = T)
 legend("right", 
-       legend = c("Mean Offense", "Mean Defense"), 
-       fill = c("grey", "dimgrey"),
+       legend = c("Mean Offense", "Mean Defense", "League avg Offense", "League avg Defense"), 
+       fill = c("grey", "dimgrey", "red", "blue"),
        bty = "n",
        cex = 0.5)
-
-
 ```
-
-
-
-
