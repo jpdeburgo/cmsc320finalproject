@@ -274,15 +274,7 @@ legend("right",
 
 ```{r performances}
 performances <- nba_performance
-payroll_df <- select(nba_seasons1, Year, Tm, Player, TrueSalary)
-payroll_df$TrueSalary <- sub('.', '', payroll_df$TrueSalary) %>% as.numeric()
-payroll_df
-payroll_df <- payroll_df %>% filter(Year >= 2000) %>% 
-  arrange(Year) %>% 
-  group_by(Year, Tm) %>% 
-  mutate(payroll=sum(TrueSalary))
-payroll_df
-  
+
 performances <- performances %>% select(Year, Team, `Winning Percentage`) %>% arrange(Year)
 performances$Year <- substr(performances$Year, 1, 4) %>% as.numeric()
 performances
