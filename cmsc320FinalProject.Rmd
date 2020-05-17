@@ -286,12 +286,22 @@ payroll_df
 performances <- performances %>% select(Year, Team, `Winning Percentage`) %>% arrange(Year)
 performances$Year <- substr(performances$Year, 1, 4) %>% as.numeric()
 performances
-
 ```
 
 
 
+```{r payroll}
+
+payroll_df <- read_csv("NBA_Season_Data.csv")
+payroll_df$TrueSalary <- as.numeric(gsub("[$,]", "", payroll_df$TrueSalary))
+
+payroll_df <- payroll_df %>% filter(!is.na(TrueSalary))
 
 
+payroll_df <- payroll_df %>% filter(Year >= 2000) %>% 
+  group_by(Tm, Year) %>% 
+  mutate(payroll=sum(TrueSalary))
 
+payroll_df %>% select(Tm, Year, payroll)
 
+```
