@@ -16,7 +16,7 @@ library(tidyverse)
 
 ```{r nba_seasons, inlciude=TRUE}
 nba_seasons <- read_csv("NBA_Season_Data.csv")
-nba_seasons <- nba_seasons%>%
+nba_seasons1 <- nba_seasons%>%
                 filter(Year >= 2000) 
 for (row in 1:nrow(nba_seasons)) {
   
@@ -54,7 +54,7 @@ for (row in 1:nrow(nba_seasons)) {
   }
   
 }
-nba_seasons
+nba_seasons1
 ```
 
 
@@ -62,8 +62,16 @@ nba_seasons
 
 ```{r nba_finals_mvp}
 nba_finals_mvp <- read_csv("NBA_Finals_and_MVP.csv")
-nba_finals_mvp
+nba_finals_mvp 
 ```
+
+
+```{r nba_performances, include=TRUE}
+nba_performance <- read_csv("Historical_NBA_Performance.csv")
+nba_performance
+```
+
+
 
 
 ```{r nba_champs, include=TRUE}
@@ -75,7 +83,7 @@ nba_champs
 
 
 ```{r nba_seasons_offense, include=TRUE}
-nba_seasons_offense <- select(nba_seasons, Year, Tm, Player, Offense=Offense_1, Defense = Defense_1)
+nba_seasons_offense <- select(nba_seasons1, Year, Tm, Player, Offense=Offense_1, Defense = Defense_1)
 nba_seasons_offense
 nba_seasons_offense %>%
   arrange(desc(Offense)) %>%
@@ -127,3 +135,4 @@ legend("right",
        bty = "n",
        cex = 0.5)
 ```
+
