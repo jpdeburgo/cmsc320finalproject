@@ -275,6 +275,7 @@ legend("right",
 ```{r performances}
 performances <- nba_performance
 
+  
 performances <- performances %>% select(Year, Team, `Winning Percentage`) %>% arrange(Year)
 performances$Year <- substr(performances$Year, 1, 4) %>% as.numeric()
 performances
@@ -290,10 +291,23 @@ payroll_df$TrueSalary <- as.numeric(gsub("[$,]", "", payroll_df$TrueSalary))
 payroll_df <- payroll_df %>% filter(!is.na(TrueSalary))
 
 
-payroll_df <- payroll_df %>% filter(Year >= 2000) %>% 
+payroll_df <- payroll_df %>% filter(Year > 2000) %>% 
   group_by(Tm, Year) %>% 
-  mutate(payroll=sum(TrueSalary))
+  mutate(payroll=sum(TrueSalary), PER_year=mean(PER)) %>% 
+  distinct(Year, Tm, payroll, PER_year)
 
-payroll_df %>% select(Tm, Year, payroll)
+
+payroll_df <- payroll_df %>% mutate(time_period=cut(Year,breaks=5))
+
+
+winnings <- payroll_df %>% group_by(Tm, time_period) %>% mutate(avg_PER=mean(PER_year), avg_Spending=mean(payroll)) %>% distinct(Tm, avg_PER, avg_Spending)
+
+winnings %>%
+  ggplot(aes(x=avg_Spending, y=avg_PER, label=Tm)) +
+    facet_grid(~time_period) +
+    geom_text() +
+    geom_point() +
+    geom_smooth(method=lm)
+
 
 ```
