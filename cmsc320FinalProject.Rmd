@@ -276,7 +276,7 @@ legend("right",
 performances <- read_csv("Historical_NBA_Performance.csv")
 payroll_df <- read_csv("NBA_Season_Data.csv")
 
-payroll_df$TrueSalary <- sub('.', '', payroll_df$TrueSalary)
+payroll_df$TrueSalary <- sub('.', '', payroll_df$TrueSalary) %>% as.numeric()
 payroll_df
 
 
@@ -291,11 +291,11 @@ performances <- performances %>% select(Year, Team, `Winning Percentage`) %>% ar
 performances$Year <- substr(performances$Year, 1, 4) %>% as.numeric()
 performances
 
-
-
-
-
-
 ```
+
+
+
+
+
 
 
