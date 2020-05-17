@@ -308,6 +308,10 @@ winnings %>%
     geom_text() +
     geom_point() +
     geom_smooth(method=lm)
+```
 
-
+```{r moneyball}
+moneyball <- left_join(performances, payroll_df, by=c("Year" = "Year", "Team" = "Tm"))
+moneyball <- moneyball %>% filter(!is.na(payroll))
+moneyball <- left_join(moneyball, )
 ```
