@@ -18,43 +18,9 @@ library(tidyverse)
 nba_seasons <- read_csv("NBA_Season_Data.csv")
 nba_seasons1 <- nba_seasons%>%
                 filter(Year >= 2000) 
-for (row in 1:nrow(nba_seasons)) {
-  
- if (nba_seasons[row, "Tm"] == "LAL") {
-   nba_seasons[row, "Tm"] <- "Los Angeles Lakers"
- }
-  
-  if (nba_seasons[row, "Tm"] == "GSW") {
-   nba_seasons[row, "Tm"] <- "Golden State Warriors"
-  }
-  
-  if ( nba_seasons[row, "Tm"] == "CLE") {
-   nba_seasons[row, "Tm"] <- "Cleveland Cavaliers"
-  }
-  
-  if (nba_seasons[row, "Tm"] == "SAS") {
-   nba_seasons[row, "Tm"] <- "San Antonio Spurs"
-  }
-  
-  
-  if ( nba_seasons[row, "Tm"] == "MIA") {
-   nba_seasons[row, "Tm"] <- "Miami Heat"
-  }
-  
-  if (nba_seasons[row, "Tm"] == "DAL") {
-   nba_seasons[row, "Tm"] <- "Dallas Mavericks"
-  }
-  
-  if (nba_seasons[row, "Tm"] == "BOS") {
-   nba_seasons[row, "Tm"] <- "Boston Celtics"
-  }
-  
-  if (nba_seasons[row, "Tm"] == "DET") {
-   nba_seasons[row, "Tm"] <- "Detroit Pistons"
-  }
-  
-}
 nba_seasons1
+
+distinct(nba_seasons1, Tm)
 ```
 
 
@@ -62,12 +28,186 @@ nba_seasons1
 
 ```{r nba_finals_mvp}
 nba_finals_mvp <- read_csv("NBA_Finals_and_MVP.csv")
-nba_finals_mvp 
+nba_finals_mvp <- nba_finals_mvp%>%
+                filter(Year >= 2000) 
+for (row in 1:nrow(nba_finals_mvp)) {
+  
+ if (nba_finals_mvp[row, "NBA Champion"] == "Los Angeles Lakers") {
+   nba_finals_mvp[row, "NBA Champion"] <- "LAL"
+ }
+  
+  if (nba_finals_mvp[row, "NBA Champion"] == "Golden State Warriors") {
+   nba_finals_mvp[row, "NBA Champion"] <- "GSW"
+  }
+  
+  if ( nba_finals_mvp[row, "NBA Champion"] == "Cleveland Cavaliers") {
+   nba_finals_mvp[row, "NBA Champion"] <- "CLE"
+  }
+  
+  if (nba_finals_mvp[row, "NBA Champion"] == "San Antonio Spurs") {
+   nba_finals_mvp[row, "NBA Champion"] <- "SAS"
+  }
+  
+  
+  if ( nba_finals_mvp[row, "NBA Champion"] == "Miami Heat") {
+   nba_finals_mvp[row, "NBA Champion"] <- "MIA"
+  }
+  
+  if (nba_finals_mvp[row, "NBA Champion"] == "Dallas Mavericks") {
+   nba_finals_mvp[row, "NBA Champion"] <- "DAL"
+  }
+  
+  if (nba_finals_mvp[row, "NBA Champion"] == "Boston Celtics") {
+   nba_finals_mvp[row, "NBA Champion"] <- "BOS"
+  }
+  
+  if (nba_finals_mvp[row, "NBA Champion"] == "Detroit Pistons") {
+   nba_finals_mvp[row, "NBA Champion"] <- "DET"
+  }
+  
+}
 ```
 
 
 ```{r nba_performances, include=TRUE}
 nba_performance <- read_csv("Historical_NBA_Performance.csv")
+
+
+nba_performance <- nba_performance%>%
+                filter(Year >= 2000) 
+for (row in 1:nrow(nba_performance)) {
+  
+  if (nba_performance[row, "Team"] == "Nets") {
+   nba_performance[row, "Team"] <- "BRK"
+ }
+  
+  if (nba_performance[row, "Team"] == "Thunder") {
+   nba_performance[row, "Team"] <- "OKC"
+ }
+  
+  if (nba_performance[row, "Team"] == "Pelicans") {
+   nba_performance[row, "Team"] <- "NOP"
+ }
+  
+  if (nba_performance[row, "Team"] == "Grizzlies") {
+   nba_performance[row, "Team"] <- "MEM"
+ }
+  
+  if (nba_performance[row, "Team"] == "Magic") {
+   nba_performance[row, "Team"] <- "ORL"
+ }
+  
+  if (nba_performance[row, "Team"] == "Clippers") {
+   nba_performance[row, "Team"] <- "LAC"
+ }
+  
+  if (nba_performance[row, "Team"] == "Rockets") {
+   nba_performance[row, "Team"] <- "HOU"
+ }
+  
+  if (nba_performance[row, "Team"] == "Suns") {
+   nba_performance[row, "Team"] <- "PHO"
+ }
+  
+  if (nba_performance[row, "Team"] == "Trail Blazers") {
+   nba_performance[row, "Team"] <- "POR"
+ }
+  
+  if (nba_performance[row, "Team"] == "76ers") {
+   nba_performance[row, "Team"] <- "PHI"
+ }
+  
+  if (nba_performance[row, "Team"] == "Kings") {
+   nba_performance[row, "Team"] <- "SAC"
+ }
+  
+  
+  if (nba_performance[row, "Team"] == "Wizards") {
+   nba_performance[row, "Team"] <- "WAS"
+ }
+  
+  if (nba_performance[row, "Team"] == "Jazz") {
+   nba_performance[row, "Team"] <- "UTA"
+ }
+  
+  if (nba_performance[row, "Team"] == "Nuggets") {
+   nba_performance[row, "Team"] <- "DEN"
+ }
+  
+  if (nba_performance[row, "Team"] == "Hawks") {
+   nba_performance[row, "Team"] <- "ATL"
+  }
+  
+  if (nba_performance[row, "Team"] == "Pacers") {
+   nba_performance[row, "Team"] <- "IND"
+ }
+  
+  if (nba_performance[row, "Team"] == "Bulls") {
+   nba_performance[row, "Team"] <- "CHI"
+ }
+  
+  if (nba_performance[row, "Team"] == "Hornets" || nba_performance[row, "Team"] == "Bobcats") {
+   nba_performance[row, "Team"] <- "CHH"
+ }
+  
+  if (nba_performance[row, "Team"] == "Bucks") {
+   nba_performance[row, "Team"] <- "MIL"
+ }
+  
+  if (nba_performance[row, "Team"] == "Raptors") {
+   nba_performance[row, "Team"] <- "TOR"
+ }
+  
+  if (nba_performance[row, "Team"] == "Timberwolves") {
+   nba_performance[row, "Team"] <- "MIN"
+ }
+  
+  if (nba_performance[row, "Team"] == "Knicks") {
+   nba_performance[row, "Team"] <- "NYK"
+ }
+  
+   if (nba_performance[row, "Team"] == "Supersonics") {
+   nba_performance[row, "Team"] <- "SEA"
+ }
+  
+ if (nba_performance[row, "Team"] == "Lakers") {
+   nba_performance[row, "Team"] <- "LAL"
+ }
+  
+  if (nba_performance[row, "Team"] == "Warriors") {
+   nba_performance[row, "Team"] <- "GSW"
+  }
+  
+  if ( nba_performance[row, "Team"] == "Cavaliers") {
+   nba_performance[row, "Team"] <- "CLE"
+  }
+  
+  if (nba_performance[row, "Team"] == "Spurs") {
+   nba_performance[row, "Team"] <- "SAS"
+  }
+  
+  
+  if ( nba_performance[row, "Team"] == "Heat") {
+   nba_performance[row, "Team"] <- "MIA"
+  }
+  
+  if (nba_performance[row, "Team"] == "Mavericks") {
+   nba_performance[row, "Team"] <- "DAL"
+  }
+  
+  if (nba_performance[row, "Team"] == "Celtics") {
+   nba_performance[row, "Team"] <- "BOS"
+  }
+  
+  if (nba_performance[row, "Team"] == "Pistons") {
+   nba_performance[row, "Team"] <- "DET"
+  }
+  
+}
+
+
+distinct(nba_performance, Team)
+
 nba_performance
 ```
 
@@ -77,7 +217,7 @@ nba_performance
 ```{r nba_champs, include=TRUE}
 nba_champs <- select(nba_finals_mvp, 1, 5) %>%
                 filter(Year >= 2000) %>%
-                arrange(desc(Year)) 
+                arrange(desc(Year))
 nba_champs
 ```
 
