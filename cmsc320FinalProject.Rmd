@@ -19,7 +19,6 @@ nba_seasons <- read_csv("NBA_Season_Data.csv")
 nba_seasons1 <- nba_seasons%>%
                 filter(Year >= 2000) 
 nba_seasons1
-
 distinct(nba_seasons1, Tm)
 ```
 
@@ -71,8 +70,6 @@ for (row in 1:nrow(nba_finals_mvp)) {
 
 ```{r nba_performances, include=TRUE}
 nba_performance <- read_csv("Historical_NBA_Performance.csv")
-
-
 nba_performance <- nba_performance%>%
                 filter(Year >= 2000) 
 for (row in 1:nrow(nba_performance)) {
@@ -204,10 +201,7 @@ for (row in 1:nrow(nba_performance)) {
   }
   
 }
-
-
 distinct(nba_performance, Team)
-
 nba_performance
 ```
 
@@ -275,4 +269,33 @@ legend("right",
        bty = "n",
        cex = 0.5)
 ```
+
+
+
+```{r performances}
+performances <- read_csv("Historical_NBA_Performance.csv")
+payroll_df <- read_csv("NBA_Season_Data.csv")
+
+payroll_df$TrueSalary <- sub('.', '', payroll_df$TrueSalary)
+payroll_df
+
+
+payroll_df <- payroll_df %>% filter(Year >= 2000) %>% 
+  arrange(Year) %>% 
+  group_by(Year, Tm) %>% 
+  mutate(payroll=sum(TrueSalary))
+payroll_df
+  
+
+performances <- performances %>% select(Year, Team, `Winning Percentage`) %>% arrange(Year)
+performances$Year <- substr(performances$Year, 1, 4) %>% as.numeric()
+performances
+
+
+
+
+
+
+```
+
 
