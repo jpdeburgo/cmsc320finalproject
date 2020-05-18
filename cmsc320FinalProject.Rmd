@@ -305,7 +305,8 @@ performances
 ```
 
 
-
+These graphs show a team's average player efficience rating (PER) on the Y-axis and compares it to the team's average payroll on the X-axis
+over the specified period of time. 
 ```{r payroll}
 payroll_df <- read_csv("NBA_Season_Data.csv")
 payroll_df$TrueSalary <- as.numeric(gsub("[$,]", "", payroll_df$TrueSalary))
