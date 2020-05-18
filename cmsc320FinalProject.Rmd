@@ -358,11 +358,17 @@ for (t in times) {
 }
 ```
 
+The following graph shows a transformation to see how efficient teams are in winning in terms of their total payroll over different time periods. 
+This was done by dividing their avg winning over each time period by their avg payroll. The higher the result is, the better their winning percentage is based on how much they spend. This transformation will favor teams with a decent winning percentage but low payroll over teams with a slightly better winning percentage but with a significantly higher avg payroll.
+
 ```{r trans}
+
+
 time_period_df <- moneyball %>% 
   group_by(Team, time_period) %>% 
   mutate(avg_winPct = mean(win_p), avg_payroll = mean(payroll), efficiency = avg_winPct/avg_payroll, time_pd=cut(Year,breaks=4)) %>% 
   arrange(time_period)
+
 time_period_df %>%
   ggplot(aes(x=Team, y=efficiency, label=Team)) +
     facet_grid(~time_period) +
@@ -371,16 +377,16 @@ time_period_df %>%
                            size=4, angle=90),
           axis.text.y = element_text(face="bold", 
                            size=14, angle=45))
-for (t in times) {
-  x <- filter(time_period_df, time_period == t)
-  print(x %>%
-          ggplot(aes(x=Team, y=efficiency, label=Team)) +
-          facet_grid(~time_period) +
-          geom_bar(stat="identity") +
-          theme(axis.text.x = element_text(face="bold", size=4, angle=90),
-          axis.text.y = element_text(face="bold", size=14, angle=45)) )
-}
+
 ```
+
+Based on the graph, the Atlanta hawks had the best efficiency from 2004-2009 with the Portland Trailblazers coming close in terms of efficiency. The rest of the teams were all close to one another in terms of spread and were not too much lower than the top 2 teams. This means the data center was relatively high in this time period.
+
+In 2000-2004, the Charlette Hornets were significantly the most efficient in their spending. The center of the data was much lower relative to the Hornets. The Washington Wizards were the only other team to come close to the Hornets in this time period.
+
+Then in 2009-2013, the spread was greater than in any other time period. The Denver Nuggets were the most efficient, many other teams were very close to being the second best.
+
+Finally in 2013-2016, the data was once again very spread out. The most efficient team was the Orlando Magic, but not by significantly more than the rest (as they were in other time periods). This time period shows the greatest spread which means there was a lot less equality in terms of competition in the league at this time.
 
 In this section we want to know and visualize the correlation between the payroll and the winning percentage in the NBA database. By doing this it will help us understando the importance of the payroll amound among the teams and compare it to the NBA Champions during five time periods.
 
