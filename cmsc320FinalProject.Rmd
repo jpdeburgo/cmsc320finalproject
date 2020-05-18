@@ -307,7 +307,6 @@ payroll_df
 
 winnings <- payroll_df %>% group_by(Tm, time_period) %>% mutate(avg_PER=mean(PER_year), avg_Spending=mean(payroll)) %>% distinct(Tm, avg_PER, avg_Spending)
 
-#ggplot(winnings, aes(x=avg_Spending, y=avg_PER, label=Tm)) + geom_point() + geom_smooth(method=lm) + facet_grid(.~time_period)
 
 for (t in times) {
   x <- filter(winnings, time_period == t)
@@ -328,6 +327,20 @@ for (t in times) {
 ```{r moneyball}
 moneyball <- left_join(performances, payroll_df, by=c("Year" = "Year", "Team" = "Tm"))
 moneyball <- moneyball %>% filter(!is.na(payroll))
-moneyball <- left_join(moneyball, )
+moneyball <- rename(moneyball, win_p = "Winning Percentage")
+moneyball
+winnings <- moneyball %>% group_by(Team, time_period) %>% mutate(avg_Spending=mean(payroll), win_percentage=mean(win_p)) %>% distinct(Tm, avg_Spending, win_percentage)
+
+winnings
+for (t in times) {
+  x <- filter(winnings, time_period == t)
+  print(x %>%
+      ggplot(aes(x=avg_Spending, y=win_percentage, label=Team)) +
+      facet_grid(~time_period) +
+      geom_text() +
+      geom_point() +
+      geom_smooth(method=lm))
+  
+}
 ```
 
