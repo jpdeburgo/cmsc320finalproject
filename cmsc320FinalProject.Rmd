@@ -313,23 +313,17 @@ payroll_df <- payroll_df %>% filter(Year > 2000) %>%
   mutate(payroll=sum(TrueSalary), PER_year=mean(PER)) %>% 
   distinct(Year, Tm, payroll, PER_year)
 payroll_df
-
 classify <- function(yearID) {
   if (yearID >= 2000 && yearID <= 2004) "[2000,2004]"
   else if (yearID > 2004 && yearID <= 2009) "(2004,2009]"
   else if (yearID > 2009 && yearID <= 2013) "(2009,2013]"
   else if (yearID > 2013 && yearID <= 2016) "(2013,2016]"
 }
-
 times <- c("[2000,2004]", "(2004,2009]", "(2009,2013]", "(2013,2016]")
-
 payroll_df <- payroll_df %>%
                       mutate(time_period = classify(Year))
 payroll_df
-
 winnings <- payroll_df %>% group_by(Tm, time_period) %>% mutate(avg_PER=mean(PER_year), avg_Spending=mean(payroll)) %>% distinct(Tm, avg_PER, avg_Spending)
-
-
 for (t in times) {
   x <- filter(winnings, time_period == t)
   print(x %>%
@@ -340,7 +334,6 @@ for (t in times) {
       geom_smooth(method=lm))
   
 }
-
 ```
 
 
@@ -352,7 +345,6 @@ moneyball <- moneyball %>% filter(!is.na(payroll))
 moneyball <- rename(moneyball, win_p = "Winning Percentage")
 moneyball
 winnings <- moneyball %>% group_by(Team, time_period) %>% mutate(avg_Spending=mean(payroll), win_percentage=mean(win_p)) %>% distinct(Tm, avg_Spending, win_percentage)
-
 winnings
 for (t in times) {
   x <- filter(winnings, time_period == t)
@@ -367,13 +359,10 @@ for (t in times) {
 ```
 
 ```{r trans}
-
-
 time_period_df <- moneyball %>% 
   group_by(Team, time_period) %>% 
   mutate(avg_winPct = mean(win_p), avg_payroll = mean(payroll), efficiency = avg_winPct/avg_payroll, time_pd=cut(Year,breaks=4)) %>% 
   arrange(time_period)
-
 time_period_df %>%
   ggplot(aes(x=Team, y=efficiency, label=Team)) +
     facet_grid(~time_period) +
@@ -382,7 +371,15 @@ time_period_df %>%
                            size=4, angle=90),
           axis.text.y = element_text(face="bold", 
                            size=14, angle=45))
-
+for (t in times) {
+  x <- filter(time_period_df, time_period == t)
+  print(x %>%
+          ggplot(aes(x=Team, y=efficiency, label=Team)) +
+          facet_grid(~time_period) +
+          geom_bar(stat="identity") +
+          theme(axis.text.x = element_text(face="bold", size=4, angle=90),
+          axis.text.y = element_text(face="bold", size=14, angle=45)) )
+}
 ```
 
 In this section we want to know and visualize the correlation between the payroll and the winning percentage in the NBA database. By doing this it will help us understando the importance of the payroll amound among the teams and compare it to the NBA Champions during five time periods.
@@ -390,24 +387,32 @@ In this section we want to know and visualize the correlation between the payrol
 ```{r moneyball}
 nba_data <- left_join(performances, payroll_df, by=c("Year" = "Year", "Team" = "Tm"))
 nba_data <- nba_data %>% filter(!is.na(payroll))
-
 nba_data <- rename(nba_data, win_p = "Winning Percentage")
 winnings <- nba_data %>% group_by(Team, time_period) %>% mutate(avg_Spending=mean(payroll), win_percentage=mean(win_p)) %>% distinct(Tm, avg_Spending, win_percentage)
-
 ## left join
 nba_data <- sqldf("SELECT m.*, (m.Team = off.champ) as champs
               FROM moneyball as m
               LEFT JOIN offense_champs as off ON m.Year = off.Year")
 
-nba_data$is_champ <- nba_data$champs == 1
+nba_data <- left_join(moneyball, offense_champs, by=c("Year"="Year"))
 nba_data
-
-
+nba_data$is_champ <- nba_data$champ == nba_data$Team
+nba_data
 gg1 <- ggplot(nba_data, aes(x=payroll, y=win_p)) +
         geom_point(aes(color= is_champ)) +
         labs(x="Payroll", y="Winning Percentage", fill= "Champtions") + 
         geom_smooth(method=lm) #add regression line
-
 gg1 + facet_wrap( ~ cut(Year, breaks =5), ncol=2)
+
+for (t in times) {
+  x <- filter(nba_data, time_period == t)
+  gg1 <- ggplot(x, aes(x=payroll, y=win_p)) +
+        geom_point(aes(color= is_champ)) +
+        labs(x="Payroll", y="Winning Percentage", fill= "Champtions") + 
+        geom_smooth(method=lm) #add regression line
+        gg1 + facet_wrap( ~ cut(Year, breaks =5), ncol=2)
+  print(gg1)
+}
 ```
+
 
