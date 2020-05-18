@@ -344,3 +344,24 @@ for (t in times) {
 }
 ```
 
+```{r trans}
+
+
+time_period_df <- moneyball %>% 
+  group_by(Team, time_period) %>% 
+  mutate(avg_winPct = mean(win_p), avg_payroll = mean(payroll), efficiency = avg_winPct/avg_payroll, time_pd=cut(Year,breaks=4)) %>% 
+  arrange(time_period)
+
+time_period_df %>%
+  ggplot(aes(x=Team, y=efficiency, label=Team)) +
+    facet_grid(~time_period) +
+    geom_bar(stat="identity") +
+ theme(axis.text.x = element_text(face="bold",
+                           size=4, angle=90),
+          axis.text.y = element_text(face="bold", 
+                           size=14, angle=45))
+
+```
+
+
+
