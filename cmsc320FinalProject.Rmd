@@ -237,7 +237,9 @@ nba_champs <- select(nba_finals_mvp, 1, 5) %>%
                 arrange(desc(Year))
 nba_champs
 ```
-
+Offense: OEff (Offense): Offensive Efficiency. Points scored per 100 possessions. When looking at team stats it’s important to understand that some teams play faster than others which skews their per game stats. Faster paced teams (i.e. NBA Suns, Warrios) will get more chances to score per game than a slower paced team (i.e. NBA Pistons, Spurs), solely because they have more opportunities. This makes Team PPG and Opposition PPG a poor indicator of a team's offense/defense.
+By using points per possession, we’re looking at how many points a team scores when they have the ball on offense. This is called offensive efficiency or offensive rating, and is measured in points per 100 possessions. Basically offensive efficiency answers the question “if this team had the ball 100 times, how many points would it score?”.. The formula is: OEff= TeamPts100/POSS
+,Defense: DEff (Defense): Defensive Efficiency (or Defensive Rating). Similar to OEff, we can rate defenses by calculating how many points a team allows per possession, called defensive efficiency or defensive rating. The formula is: DEff= OppPts*100/OppPOSS
 
 ```{r nba_seasons_offense, include=TRUE}
 nba_seasons_offense <- select(nba_seasons1, Year, Tm, Player, Offense=Offense_1, Defense = Defense_1)
