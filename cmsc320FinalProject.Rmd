@@ -1,19 +1,41 @@
 ---
-title: "Untitled"
-author: "Justin De Burgo, Sherief El-Ghazawi"
-date: "5/14/2020"
+title: "Final Project 320 - NBA"
+author: "Justin De Burgo, Sherief El-Ghazawi, Josue Arana"
+date: "5/18/2020"
 output: html_document
 ---
 
+Things to consider 
+
+## Motivation 
+Does the tutorial make the reader believe the topic is relevant or important (i) in general and (ii) with respect to data science?
+
+## Understanding. 
+After reading through the tutorial, does an uninformed reader feel informed about the topic? Would a reader who already knew about the topic feel like s/he learned more about it?
+
+## Other resources. 
+Does the tutorial link out to other resources (on the web, in books, etc) that would give a lagging reader additional help on specific topics, or an advanced reader the ability to dive more deeply into a specific application area or technique?
+
+## Prose. 
+Does the prose portion of the tutorial actually add to the content of the deliverable?
+
+## Code. 
+Is the code well written, well documented, reproducible, and does it help the reader understand the tutorial? Does it give good examples of specific techniques?
+
+## Subjective evaluation. 
+If somebody linked to this tutorial from, say, Hacker News, would people actually read through the entire thing?
+Group Work
 
 
+## Data Collection 
+
+First let's import the packages and libraries we'll need.
 ```{r setup, include=TRUE}
 library(tidyverse)
 library(ggplot2)
 ```
 
-## R Markdown
-
+We'll read the CSV and turn it into an R DataFrame for further analysis.
 
 ```{r nba_seasons, inlciude=TRUE}
 nba_seasons <- read_csv("NBA_Season_Data.csv")
@@ -322,7 +344,7 @@ for (t in times) {
 ```
 
 
-
+## Exploratory data analysis
 
 ```{r moneyball}
 moneyball <- left_join(performances, payroll_df, by=c("Year" = "Year", "Team" = "Tm"))
@@ -363,5 +385,29 @@ time_period_df %>%
 
 ```
 
+In this section we want to know and visualize the correlation between the payroll and the winning percentage in the NBA database. By doing this it will help us understando the importance of the payroll amound among the teams and compare it to the NBA Champions during five time periods.
 
+```{r moneyball}
+nba_data <- left_join(performances, payroll_df, by=c("Year" = "Year", "Team" = "Tm"))
+nba_data <- nba_data %>% filter(!is.na(payroll))
+
+nba_data <- rename(nba_data, win_p = "Winning Percentage")
+winnings <- nba_data %>% group_by(Team, time_period) %>% mutate(avg_Spending=mean(payroll), win_percentage=mean(win_p)) %>% distinct(Tm, avg_Spending, win_percentage)
+
+## left join
+nba_data <- sqldf("SELECT m.*, (m.Team = off.champ) as champs
+              FROM moneyball as m
+              LEFT JOIN offense_champs as off ON m.Year = off.Year")
+
+nba_data$is_champ <- nba_data$champs == 1
+nba_data
+
+
+gg1 <- ggplot(nba_data, aes(x=payroll, y=win_p)) +
+        geom_point(aes(color= is_champ)) +
+        labs(x="Payroll", y="Winning Percentage", fill= "Champtions") + 
+        geom_smooth(method=lm) #add regression line
+
+gg1 + facet_wrap( ~ cut(Year, breaks =5), ncol=2)
+```
 
