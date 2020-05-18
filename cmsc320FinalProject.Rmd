@@ -9,6 +9,7 @@ output: html_document
 
 ```{r setup, include=TRUE}
 library(tidyverse)
+library(ggplot2)
 ```
 
 ## R Markdown
@@ -274,8 +275,6 @@ legend("right",
 
 ```{r performances}
 performances <- nba_performance
-
-  
 performances <- performances %>% select(Year, Team, `Winning Percentage`) %>% arrange(Year)
 performances$Year <- substr(performances$Year, 1, 4) %>% as.numeric()
 performances
@@ -284,34 +283,51 @@ performances
 
 
 ```{r payroll}
-
 payroll_df <- read_csv("NBA_Season_Data.csv")
 payroll_df$TrueSalary <- as.numeric(gsub("[$,]", "", payroll_df$TrueSalary))
-
 payroll_df <- payroll_df %>% filter(!is.na(TrueSalary))
-
-
 payroll_df <- payroll_df %>% filter(Year > 2000) %>% 
   group_by(Tm, Year) %>% 
   mutate(payroll=sum(TrueSalary), PER_year=mean(PER)) %>% 
   distinct(Year, Tm, payroll, PER_year)
+payroll_df
 
+classify <- function(yearID) {
+  if (yearID >= 2000 && yearID <= 2004) "[2000,2004]"
+  else if (yearID > 2004 && yearID <= 2009) "(2004,2009]"
+  else if (yearID > 2009 && yearID <= 2013) "(2009,2013]"
+  else if (yearID > 2013 && yearID <= 2016) "(2013,2016]"
+}
 
-payroll_df <- payroll_df %>% mutate(time_period=cut(Year,breaks=5))
+times <- c("[2000,2004]", "(2004,2009]", "(2009,2013]", "(2013,2016]")
 
+payroll_df <- payroll_df %>%
+                      mutate(time_period = classify(Year))
+payroll_df
 
 winnings <- payroll_df %>% group_by(Tm, time_period) %>% mutate(avg_PER=mean(PER_year), avg_Spending=mean(payroll)) %>% distinct(Tm, avg_PER, avg_Spending)
 
-winnings %>%
-  ggplot(aes(x=avg_Spending, y=avg_PER, label=Tm)) +
-    facet_grid(~time_period) +
-    geom_text() +
-    geom_point() +
-    geom_smooth(method=lm)
+#ggplot(winnings, aes(x=avg_Spending, y=avg_PER, label=Tm)) + geom_point() + geom_smooth(method=lm) + facet_grid(.~time_period)
+
+for (t in times) {
+  x <- filter(winnings, time_period == t)
+  print(x %>%
+      ggplot(aes(x=avg_Spending, y=avg_PER, label=Tm)) +
+      facet_grid(~time_period) +
+      geom_text() +
+      geom_point() +
+      geom_smooth(method=lm))
+  
+}
+
 ```
+
+
+
 
 ```{r moneyball}
 moneyball <- left_join(performances, payroll_df, by=c("Year" = "Year", "Team" = "Tm"))
 moneyball <- moneyball %>% filter(!is.na(payroll))
 moneyball <- left_join(moneyball, )
 ```
+
