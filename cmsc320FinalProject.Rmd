@@ -523,6 +523,11 @@ At last, we have 2013-2016 where the graph is significantly more sparsed thatn o
 
 
 
+CONCLUSION:
+Based on the experiments conducted in this tutorial, it's evident that the most important factors of creating a championship team is the offensive rating of a team. Being efficientt with spending is also very important as there are some teams that spend more than others, but still suffer from a low winning percentage.
+
+
+
 ## Resources
 
 jgrosz99. (2017). NBA Player Data 1978-2016. Retrieved from Data World:      https://data.world/jgrosz99/nba-player-data-1978-2016/workspace/file?filename=NBA+Season+Data.csv
