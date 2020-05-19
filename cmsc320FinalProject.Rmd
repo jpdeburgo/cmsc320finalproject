@@ -486,7 +486,7 @@ Finally in 2013-2016, the data was once again very spread out. The most efficien
 OVERVIEW:
 In this section we want to know and visualize the correlation between the payroll and the winning percentage in the NBA database. By doing this it will help us understando the importance of the payroll amound among the teams and compare it to the NBA Champions during five time periods.
 
-```{r nba_money}
+```{r champ_plots}
 nba_data <- left_join(performances, payroll_df, by=c("Year" = "Year", "Team" = "Tm"))
 nba_data <- nba_data %>% filter(!is.na(payroll))
 nba_data <- rename(nba_data, win_p = "Winning Percentage")
