@@ -45,7 +45,6 @@ nba_seasons1
 
 nba_finals_mvp <- read_csv("NBA_Finals_and_MVP.csv")
 nba_finals_mvp
-distinct(nba_seasons1, Tm)
 ```
 
 As a result we have two data frames, one containing the seasons and the other the nba finals.
@@ -251,15 +250,14 @@ nba_champs <- select(nba_finals_mvp, 1, 5) %>%
                 arrange(desc(Year))
 nba_champs
 ```
-<<<<<<< HEAD
 
 Now, let's look at the top 100 Players with the best offence performance out of all the seasons. 
 We will use this data frame for future transformations. 
-=======
+
 Offense: OEff (Offense): Offensive Efficiency. Points scored per 100 possessions. When looking at team stats it’s important to understand that some teams play faster than others which skews their per game stats. Faster paced teams (i.e. NBA Suns, Warrios) will get more chances to score per game than a slower paced team (i.e. NBA Pistons, Spurs), solely because they have more opportunities. This makes Team PPG and Opposition PPG a poor indicator of a team's offense/defense.
 By using points per possession, we’re looking at how many points a team scores when they have the ball on offense. This is called offensive efficiency or offensive rating, and is measured in points per 100 possessions. Basically offensive efficiency answers the question “if this team had the ball 100 times, how many points would it score?”.. The formula is: OEff= TeamPts100/POSS
 ,Defense: DEff (Defense): Defensive Efficiency (or Defensive Rating). Similar to OEff, we can rate defenses by calculating how many points a team allows per possession, called defensive efficiency or defensive rating. The formula is: DEff= OppPts*100/OppPOSS
->>>>>>> 5c50dbdfac9012c135611b8102cccffe3b6f82b2
+
 
 ```{r nba_seasons_offense, include=TRUE}
 nba_seasons_offense <- select(nba_seasons1, Year, Tm, Player, Offense=Offense_1, Defense = Defense_1)
@@ -304,19 +302,58 @@ offense_champs
 ```
 
 
+OVERVIEW:
+Here will be ranking the nba championship teams from 2000-2016 based on their offense and defense scores
+The offense and defense scores were obtained from the original imported dataset, they were calculated
+by factoring in the positives/negatives of various offensive/defensive stats. For example, offense data was
+obtained by factoring in shots missed with those made. Defense compared steals/blocks with turnovers and conceded
+rebounds (as well as other factors). 
+
+We will also be comparing those stats of the championship teams with the avgs of the rest of the league to see how
+dominant they were.
+
+It is also important to note that most of the offense/defense stats are negative, so the closer the values are to 0,
+the better it is.
+
 ```{r plot_offense, include=TRUE}
-offense_champs %>%
-  ggplot(mapping=aes(x=champ, y=mean_offense, color="red", width=0.5)) +
-    geom_bar(stat="identity")
-par(mar=c(11,4,4,4))
-test2 <- rbind(offense_champs$mean_offense,offense_champs$mean_defense, year_avg$league_avg_offense, year_avg$league_avg_defense)
-barplot(test2,beside=T, names.arg = offense_champs$champ, las=2, legend = T)
+
+
+## Here we add 4 to the ratings of our data since most of it was negative (as mentioned). 
+## This allows us to visualize our data much easier
+
+offense_champs$mean_offense <- offense_champs$mean_offense+4
+offense_champs$mean_defense <- offense_champs$mean_defense+4
+
+year_avg$league_avg_offense <- year_avg$league_avg_offense+4
+year_avg$league_avg_defense <- year_avg$league_avg_defense+4
+
+
+## Here we bind all the rows that we will be plotting so that they all show up on the same graph
+ranks_plot <- rbind(offense_champs$mean_offense, year_avg$league_avg_offense, offense_champs$mean_defense, year_avg$league_avg_defense)
+barplot(ranks_plot, 
+        ## This allows us to put all the bars side-by-side
+        beside=T, 
+        names.arg = offense_champs$champ, 
+        las=2, 
+        #ylim=c(0,10),
+        col = c("royalblue4", "royalblue1", "red4", "orangered"),
+        legend = T)
+
+## Customizing our legend so that the colors correlate to the proper bars as well as positioning
 legend("right", 
-       legend = c("Mean Offense", "Mean Defense", "League avg Offense", "League avg Defense"), 
-       fill = c("grey", "dimgrey", "red", "blue"),
+       legend = c("Mean Offense", "League avg Offense", "Mean Defense", "League avg Defense"), 
+       fill = c("royalblue4", "royalblue1", "red4", "orangered"),
        bty = "n",
        cex = 0.5)
+
+
 ```
+
+RESULTS:
+The following plot shows 4 bars for each championship team. The first (dark blue) bar represents the avg offense rating for the championship team and the lighter blue bar represents the avg offense rating for the league that same year. The same is done with red bars which represent the avg defense rating for the championship team with the league avg defense rating to the right of it.
+
+Based on these plots, we see that championship teams are rated very closely to the league average. The main difference we see is with the average offense ratings. 
+Throughout the years, championship teams have a significantly better offense rating than the rest of the league. This means that offense is the most important factor in deciding a championship team. This is contrary to the common saying "Defense wins championships." 
 
 Here we create an updated dataframe using the existing NBA performance dataframe. The purpose of this is to turn the type of the year from String to Integer for future processing. 
 
@@ -327,14 +364,10 @@ performances$Year <- substr(performances$Year, 1, 4) %>% as.numeric()
 performances
 ```
 
-<<<<<<< HEAD
+
 These graphs show a team's average player efficience rating (PER) on the Y-axis and compares it to the team's average payroll on the X-axis over the specified period of time. The graphs show that typically, teams that spent more on player tended to have higher player efficiency ratings.
 
-=======
 
-These graphs show a team's average player efficience rating (PER) on the Y-axis and compares it to the team's average payroll on the X-axis
-over the specified period of time. 
->>>>>>> 5c50dbdfac9012c135611b8102cccffe3b6f82b2
 ```{r payroll}
 payroll_df <- read_csv("NBA_Season_Data.csv")
 payroll_df$TrueSalary <- as.numeric(gsub("[$,]", "", payroll_df$TrueSalary))
@@ -355,6 +388,7 @@ payroll_df <- payroll_df %>%
                       mutate(time_period = classify(Year))
 
 winnings <- payroll_df %>% group_by(Tm, time_period) %>% mutate(avg_PER=mean(PER_year), avg_Spending=mean(payroll)) %>% distinct(Tm, avg_PER, avg_Spending)
+
 for (t in times) {
   x <- filter(winnings, time_period == t)
   print(x %>%
@@ -365,6 +399,19 @@ for (t in times) {
       geom_smooth(method=lm))
 }
 ```
+
+RESULTS:
+From the first graph (2000-2004) we see that there is a few outliers. This means there are teams that are very efficient with their spending (most notably, Sacramento and Dallas) while there are other teams with very poor efficiency (such as Chicago and Vancouver). There is also a notable amount of teams that are centered in the middle.
+
+The next graph shows a linear regression line with a much smaller slope than that in the first graph. This means that there is less of a correlation between spending and PER in this time period. It could be assumed that other factors were important in PER than spending during this time.
+
+The next time period (2009-2013) shows a much wider spread than the previous charts. This could mean that there was a larger difference between teams in the amount of money they were spending. It is possible that during this time new owners could have come into play which affected the amount of money that teams had.
+
+The final time period shows more significant outliers than in any other time period. Philadelphia had very poor efficiency compared to the rest of the teams, whereas Golden State completely dominated the rest of the league in terms of PER with how much they were spending. Many basketball fans note that in 2014 GSW acquired most of the current starting lineup which was responsible for their championship in 2015. Their success in their efficient spending shows how a once low ranking team could be flipped into a championship team.
+
+
+
+
 
 
 ## Exploratory data analysis
@@ -387,7 +434,21 @@ for (t in times) {
   
 }
 ```
+RESULTS:
+First thing to note in the charts above is how closely the data points fall onto the linear regression line as compared to the earlier chart which showed (PER vs. payroll). This means that there is more of a correlation between winning percentage and avg payroll/spending. 
+The first time period shows that the data is more centerd towards the left which means teams were overall not that effective in getting wins while spending as little as possible.
 
+The next one shows a much wider spread with a less noticeable center of data which means that other factors were more important in a high winning percentage.
+
+2009-2013 however shows a much more normal distribution of data which means that average spending was one of the driving factors in a teams winning percentage.
+
+The final time period shows similar results to the one in the previous time period, with the exception of the Golden State Warriors dominating the rest of the league in terms of their efficiency. This once again shows that Golden State Warriors were the most effective team throughout the years in winning the most games and being a championship team.
+
+
+
+
+
+OVERVIEW:
 The following graph shows a transformation to see how efficient teams are in winning in terms of their total payroll over different time periods. 
 This was done by dividing their avg winning over each time period by their avg payroll. The higher the result is, the better their winning percentage is based on how much they spend. This transformation will favor teams with a decent winning percentage but low payroll over teams with a slightly better winning percentage but with a significantly higher avg payroll.
 
@@ -410,6 +471,7 @@ time_period_df %>%
 
 ```
 
+RESULTS:
 Based on the graph, the Atlanta hawks had the best efficiency from 2004-2009 with the Portland Trailblazers coming close in terms of efficiency. The rest of the teams were all close to one another in terms of spread and were not too much lower than the top 2 teams. This means the data center was relatively high in this time period.
 
 In 2000-2004, the Charlette Hornets were significantly the most efficient in their spending. The center of the data was much lower relative to the Hornets. The Washington Wizards were the only other team to come close to the Hornets in this time period.
@@ -418,6 +480,10 @@ Then in 2009-2013, the spread was greater than in any other time period. The Den
 
 Finally in 2013-2016, the data was once again very spread out. The most efficient team was the Orlando Magic, but not by significantly more than the rest (as they were in other time periods). This time period shows the greatest spread which means there was a lot less equality in terms of competition in the league at this time.
 
+
+
+
+OVERVIEW:
 In this section we want to know and visualize the correlation between the payroll and the winning percentage in the NBA database. By doing this it will help us understando the importance of the payroll amound among the teams and compare it to the NBA Champions during five time periods.
 
 ```{r nba_money}
@@ -437,12 +503,13 @@ nba_data$is_champ <- nba_data$champ == nba_data$Team
 
 gg1 <- ggplot(nba_data, aes(x=payroll, y=win_p)) +
         geom_point(aes(color= is_champ)) +
-        labs(x="Payroll", y="Winning Percentage", fill= "Champtions") + 
+        labs(x="Payroll", y="Winning Percentage", fill= "Champions") + 
         geom_smooth(method=lm) #add regression line
 gg1 + facet_wrap( ~ cut(Year, breaks =5), ncol=2)
 
 ```
 
+RESULTS:
 Based on the results from the 5 period graph, we can notice a couple things in a big scale, all 5 periods have similar regression line and money spent seems to be consistent accross time. 
 
 From 2001-2004 the higher the payroll, the higher the chance of winning. We can see a concentrated area right in the middle. The winning percentage for the chamption teams was high and consistant but none of them had an absolute higher percentage. Regression line skewed up-right. 
